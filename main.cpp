@@ -1,6 +1,15 @@
 #include <iostream>
 using namespace std;
 
+class Book {
+public:
+    int id;
+    string title;
+    string author;
+    double price;
+    bool available;
+};
+
 int main() {
 
     int choice;
