@@ -81,6 +81,54 @@ public:
     string phone;
 };
 
+// ==================== SAVE STUDENTS ====================
+
+void saveStudents(Student students[], int studentCount) {
+
+    ofstream file("students.txt");
+
+    for (int i = 0; i < studentCount; i++) {
+
+        file << students[i].id << "|"
+             << students[i].name << "|"
+             << students[i].department << "|"
+             << students[i].phone << "\n";
+    }
+
+    file.close();
+}
+
+// ==================== LOAD STUDENTS ====================
+
+void loadStudents(Student students[], int &studentCount) {
+
+    ifstream file("students.txt");
+
+    if (!file) {
+        return;
+    }
+
+    studentCount = 0;
+
+    while (file >> students[studentCount].id) {
+
+        file.ignore();
+
+        getline(file, students[studentCount].name, '|');
+
+        getline(file, students[studentCount].department, '|');
+
+        getline(file, students[studentCount].phone);
+
+        studentCount++;
+
+        if (studentCount >= 100) {
+            break;
+        }
+    }
+
+    file.close();
+}
 
 // ==================== MAIN FUNCTION ====================
 
@@ -99,6 +147,9 @@ int main() {
     // Student array
     Student students[100];
     int studentCount = 0;
+
+    // Load previously saved students
+    loadStudents(students, studentCount);
 
 
     // ==================== MAIN MENU ====================
@@ -319,6 +370,9 @@ int main() {
                     getline(cin, students[studentCount].phone);
 
                     studentCount++;
+
+                    // Save students to file
+                    saveStudents(students, studentCount);
 
                     cout << "\nStudent registered successfully!\n";
                 }
