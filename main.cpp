@@ -130,6 +130,17 @@ void loadStudents(Student students[], int &studentCount) {
     file.close();
 }
 
+// ==================== ISSUE RECORD CLASS ====================
+
+class IssueRecord {
+public:
+    int studentId;
+    int bookId;
+};
+
+
+
+
 // ==================== MAIN FUNCTION ====================
 
 int main() {
@@ -150,6 +161,10 @@ int main() {
 
     // Load previously saved students
     loadStudents(students, studentCount);
+
+
+    IssueRecord issueRecords[100];
+int issueCount = 0;
 
 
     // ==================== MAIN MENU ====================
@@ -472,20 +487,25 @@ int main() {
 
                         if (books[i].available) {
 
-                            books[i].available = false;
+    books[i].available = false;
 
-                            // Save updated book status
-                            saveBooks(books, bookCount);
+    // Create issue record
+    issueRecords[issueCount].studentId = studentId;
+    issueRecords[issueCount].bookId = bookId;
 
+    issueCount++;
 
-                            cout << "\nBook issued successfully!\n";
+    // Save updated book status
+    saveBooks(books, bookCount);
 
-                            cout << "Student ID: "
-                                 << studentId << "\n";
+    cout << "\nBook issued successfully!\n";
 
-                            cout << "Book ID: "
-                                 << bookId << "\n";
-                        }
+    cout << "Student ID: "
+         << studentId << "\n";
+
+    cout << "Book ID: "
+         << bookId << "\n";
+}
                         else {
 
                             cout << "\nBook is already issued!\n";
@@ -507,53 +527,69 @@ int main() {
 
             // ==================== RETURN BOOK ====================
 
-            case 8: {
+           // ==================== RETURN BOOK ====================
 
-                int bookId;
-                bool found = false;
+case 8: {
 
+    int bookId;
+    bool found = false;
 
-                cout << "\nEnter Book ID to return: ";
-                cin >> bookId;
+    cout << "\nEnter Book ID to return: ";
+    cin >> bookId;
 
+    for (int i = 0; i < bookCount; i++) {
 
-                for (int i = 0; i < bookCount; i++) {
+        if (books[i].id == bookId) {
 
-                    if (books[i].id == bookId) {
+            found = true;
 
-                        found = true;
+            if (!books[i].available) {
 
-
-                        if (!books[i].available) {
-
-                            books[i].available = true;
-
-                            // Save updated status
-                            saveBooks(books, bookCount);
+                books[i].available = true;
 
 
-                            cout << "\nBook returned successfully!\n";
+                // Remove issue record
+                for (int j = 0; j < issueCount; j++) {
 
-                            cout << "Book ID: "
-                                 << bookId << "\n";
+                    if (issueRecords[j].bookId == bookId) {
+
+                        // Shift records to the left
+                        for (int k = j; k < issueCount - 1; k++) {
+
+                            issueRecords[k] = issueRecords[k + 1];
                         }
-                        else {
 
-                            cout << "\nThis book is already available!\n";
-                        }
+                        issueCount--;
 
                         break;
                     }
                 }
 
 
-                if (!found) {
+                // Save updated book status
+                saveBooks(books, bookCount);
 
-                    cout << "\nBook not found!\n";
-                }
+                cout << "\nBook returned successfully!\n";
 
-                break;
+                cout << "Book ID: "
+                     << bookId << "\n";
             }
+            else {
+
+                cout << "\nThis book is already available!\n";
+            }
+
+            break;
+        }
+    }
+
+    if (!found) {
+
+        cout << "\nBook not found!\n";
+    }
+
+    break;
+}
 
 
             // ==================== EXIT ====================
